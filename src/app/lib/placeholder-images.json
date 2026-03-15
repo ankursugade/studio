@@ -1,0 +1,35 @@
+
+{
+  "placeholderImages": [
+    {
+      "id": "avatar-1",
+      "description": "User avatar 1",
+      "imageUrl": "https://picsum.photos/seed/user1/100/100",
+      "imageHint": "portrait man"
+    },
+    {
+      "id": "avatar-2",
+      "description": "User avatar 2",
+      "imageUrl": "https://picsum.photos/seed/user2/100/100",
+      "imageHint": "portrait woman"
+    },
+    {
+      "id": "avatar-3",
+      "description": "User avatar 3",
+      "imageUrl": "https://picsum.photos/seed/user3/100/100",
+      "imageHint": "portrait professional"
+    },
+    {
+      "id": "avatar-4",
+      "description": "User avatar 4",
+      "imageUrl": "https://picsum.photos/seed/user4/100/100",
+      "imageHint": "portrait person"
+    },
+    {
+      "id": "project-1",
+      "description": "Project blueprint thumbnail",
+      "imageUrl": "https://picsum.photos/seed/blueprint1/400/300",
+      "imageHint": "blueprint architecture"
+    }
+  ]
+}
