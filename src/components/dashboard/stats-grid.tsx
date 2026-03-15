@@ -2,30 +2,29 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Project, Revision } from "@/lib/types";
-import { Ruler, Clock, CheckCircle2, AlertCircle } from "lucide-react";
+import { Project } from "@/lib/types";
+import { Ruler, Clock, CheckCircle2, Trophy } from "lucide-react";
 
 interface StatsGridProps {
   projects: Project[];
-  revisions: Revision[];
-  lastStageId?: string;
+  wonStageId?: string;
 }
 
-export function StatsGrid({ projects, revisions, lastStageId }: StatsGridProps) {
+export function StatsGrid({ projects, wonStageId }: StatsGridProps) {
   const totalArea = projects.reduce((sum, p) => sum + (p.areaSqFt || 0), 0);
   const formattedArea = new Intl.NumberFormat('en-US', {
     notation: 'compact',
     maximumFractionDigits: 1
   }).format(totalArea) + " sq.ft.";
 
-  const completed = lastStageId ? projects.filter(p => p.currentStage === lastStageId).length : 0;
-  const activeRevisions = revisions.length;
+  const wonCount = wonStageId ? projects.filter(p => p.currentStage === wonStageId).length : 0;
+  const inPipelineCount = projects.length - wonCount;
 
   const stats = [
     { title: "Total Area", value: formattedArea, icon: Ruler, color: "text-accent" },
     { title: "Active Projects", value: projects.length.toString(), icon: Clock, color: "text-secondary-foreground" },
-    { title: "Completed", value: completed.toString(), icon: CheckCircle2, color: "text-green-600" },
-    { title: "Recent Revisions", value: activeRevisions.toString(), icon: AlertCircle, color: "text-destructive" },
+    { title: "In Pipeline", value: inPipelineCount.toString(), icon: CheckCircle2, color: "text-blue-600" },
+    { title: "WON Projects", value: wonCount.toString(), icon: Trophy, color: "text-green-600" },
   ];
 
   return (

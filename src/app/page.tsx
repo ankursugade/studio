@@ -25,8 +25,7 @@ export default function Home() {
     count: projects.filter(p => p.currentStage === stage.id).length
   }));
 
-  const lastStage = stages[stages.length - 1];
-  const completedCount = projects.filter(p => p.currentStage === lastStage?.id).length;
+  const wonStage = stages.find(s => s.id === 'won') || stages[stages.length - 1];
 
   return (
     <SidebarProvider>
@@ -44,7 +43,7 @@ export default function Home() {
           </header>
 
           <main className="p-6 space-y-8 max-w-[1400px] mx-auto">
-            <StatsGrid projects={projects} revisions={revisions} lastStageId={lastStage?.id} />
+            <StatsGrid projects={projects} wonStageId={wonStage?.id} />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2 space-y-8">
