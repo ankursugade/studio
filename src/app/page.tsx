@@ -21,12 +21,12 @@ export default function Home() {
 
   // Aggregate project count per stage for the chart
   const stageData = stages.map(stage => ({
-    name: stage,
-    count: projects.filter(p => p.currentStage === stage).length
+    name: stage.name,
+    count: projects.filter(p => p.currentStage === stage.id).length
   }));
 
   const lastStage = stages[stages.length - 1];
-  const completedCount = projects.filter(p => p.currentStage === lastStage).length;
+  const completedCount = projects.filter(p => p.currentStage === lastStage?.id).length;
 
   return (
     <SidebarProvider>
@@ -44,7 +44,7 @@ export default function Home() {
           </header>
 
           <main className="p-6 space-y-8 max-w-[1400px] mx-auto">
-            <StatsGrid projects={projects} revisions={revisions} lastStage={lastStage} />
+            <StatsGrid projects={projects} revisions={revisions} lastStageId={lastStage?.id} />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2 space-y-8">
@@ -90,7 +90,8 @@ export default function Home() {
                 <ActivityFeed 
                   revisions={revisions} 
                   projects={projects} 
-                  users={users} 
+                  users={users}
+                  stages={stages}
                 />
               </div>
             </div>

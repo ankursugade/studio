@@ -45,8 +45,8 @@ export function RevisionModal({ open, project, toStage, onConfirm, onCancel }: R
     setIsSuggesting(true);
     try {
       const result = await suggestRevisionReasons({
-        fromStage: project.currentStage,
-        toStage,
+        fromStage: project.currentStage, // This is an ID now, might need to map to name if prompt expects it
+        toStage: toStage.name,
         projectDetails: `Project: ${project.title}, Client: ${project.client}`
       });
       setSuggestions(result.reasons);
@@ -73,7 +73,7 @@ export function RevisionModal({ open, project, toStage, onConfirm, onCancel }: R
           <div className="flex items-center gap-4 text-sm font-medium">
             <Badge variant="outline" className="px-3 py-1 bg-muted">{project?.currentStage}</Badge>
             <span className="text-muted-foreground">→</span>
-            <Badge variant="outline" className="px-3 py-1 bg-accent text-accent-foreground">{toStage}</Badge>
+            <Badge variant="outline" className="px-3 py-1 bg-accent text-accent-foreground">{toStage?.name}</Badge>
           </div>
 
           <div className="grid gap-2">

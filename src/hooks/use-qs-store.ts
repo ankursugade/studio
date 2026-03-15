@@ -38,26 +38,26 @@ export function useQSStore() {
     const newProject: Project = {
       ...projectData,
       id: Math.random().toString(36).substr(2, 9),
-      currentStage: stages[0] || 'Inquiry',
+      currentStage: stages[0]?.id || 'inquiry',
       updatedAt: new Date(),
     };
     setProjects(prev => [newProject, ...prev]);
   };
 
-  const updateProjectStage = (projectId: string, toStage: QSStage, reason?: string) => {
+  const updateProjectStage = (projectId: string, toStageId: string, reason?: string) => {
     setProjects(prev => prev.map(p => {
       if (p.id === projectId) {
-        const fromStage = p.currentStage;
+        const fromStageId = p.currentStage;
         
-        const fromIndex = stages.indexOf(fromStage);
-        const toIndex = stages.indexOf(toStage);
+        const fromIndex = stages.findIndex(s => s.id === fromStageId);
+        const toIndex = stages.findIndex(s => s.id === toStageId);
         
         if (toIndex < fromIndex && reason) {
           const newRevision: Revision = {
             id: Math.random().toString(36).substr(2, 9),
             projectId,
-            fromStage,
-            toStage,
+            fromStage: fromStageId,
+            toStage: toStageId,
             reason,
             userId: currentUser?.id || 'unknown',
             timestamp: new Date()
@@ -65,7 +65,7 @@ export function useQSStore() {
           setRevisions(revs => [newRevision, ...revs]);
         }
 
-        return { ...p, currentStage: toStage, updatedAt: new Date() };
+        return { ...p, currentStage: toStageId, updatedAt: new Date() };
       }
       return p;
     }));

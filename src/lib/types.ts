@@ -1,13 +1,17 @@
 
-export type QSStage = string;
+export interface QSStage {
+  id: string;
+  name: string;
+  description: string;
+}
 
 export const INITIAL_QS_STAGES: QSStage[] = [
-  'Inquiry',
-  'Take-off',
-  'Estimation',
-  'Review',
-  'Tender Submission',
-  'Post-Tender'
+  { id: 'inquiry', name: 'Inquiry', description: 'Initial project receipt and scope review.' },
+  { id: 'take-off', name: 'Take-off', description: 'Quantifying materials from drawings and specs.' },
+  { id: 'estimation', name: 'Estimation', description: 'Applying rates and calculating total costs.' },
+  { id: 'review', name: 'Review', description: 'Internal peer review and margin adjustment.' },
+  { id: 'tender-submission', name: 'Tender Submission', description: 'Final bid documents sent to the client.' },
+  { id: 'post-tender', name: 'Post-Tender', description: 'Negotiations and project award phase.' }
 ];
 
 export interface User {
@@ -23,7 +27,7 @@ export interface Project {
   title: string;
   client: string;
   assignedTo: string; // User ID
-  currentStage: QSStage;
+  currentStage: string; // References QSStage.id
   updatedAt: Date;
   value?: number;
 }
@@ -31,8 +35,8 @@ export interface Project {
 export interface Revision {
   id: string;
   projectId: string;
-  fromStage: QSStage;
-  toStage: QSStage;
+  fromStage: string; // Stage ID
+  toStage: string;   // Stage ID
   reason: string;
   userId: string;
   timestamp: Date;

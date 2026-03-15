@@ -8,10 +8,10 @@ import { Calculator, Clock, CheckCircle2, AlertCircle } from "lucide-react";
 interface StatsGridProps {
   projects: Project[];
   revisions: Revision[];
-  lastStage?: string;
+  lastStageId?: string;
 }
 
-export function StatsGrid({ projects, revisions, lastStage }: StatsGridProps) {
+export function StatsGrid({ projects, revisions, lastStageId }: StatsGridProps) {
   const totalValue = projects.reduce((sum, p) => sum + (p.value || 0), 0);
   const formattedValue = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -20,7 +20,7 @@ export function StatsGrid({ projects, revisions, lastStage }: StatsGridProps) {
     maximumFractionDigits: 1
   }).format(totalValue);
 
-  const completed = projects.filter(p => p.currentStage === lastStage).length;
+  const completed = lastStageId ? projects.filter(p => p.currentStage === lastStageId).length : 0;
   const activeRevisions = revisions.length;
 
   const stats = [

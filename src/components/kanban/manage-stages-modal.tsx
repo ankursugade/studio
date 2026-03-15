@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { QSStage } from "@/lib/types";
 import { Settings2, Plus, Trash2, ArrowUp, ArrowDown } from "lucide-react";
@@ -26,11 +27,17 @@ export function ManageStagesModal({ stages, onUpdate }: ManageStagesModalProps) 
   const [open, setOpen] = useState(false);
   const [localStages, setLocalStages] = useState<QSStage[]>(stages);
   const [newStageName, setNewStageName] = useState("");
+  const [newStageDesc, setNewStageDesc] = useState("");
 
   const handleAdd = () => {
     if (newStageName.trim()) {
-      setLocalStages([...localStages, newStageName.trim()]);
+      setLocalStages([...localStages, {
+        id: newStageName.toLowerCase().replace(/\s+/g, '-'),
+        name: newStageName.trim(),
+        description: newStageDesc.trim() || "No description provided."
+      }]);
       setNewStageName("");
+      setNewStageDesc("");
     }
   };
 
@@ -63,7 +70,7 @@ export function ManageStagesModal({ stages, onUpdate }: ManageStagesModalProps) 
           Manage Stages
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Workflow Stages</DialogTitle>
           <DialogDescription>
@@ -72,23 +79,39 @@ export function ManageStagesModal({ stages, onUpdate }: ManageStagesModalProps) 
         </DialogHeader>
         
         <div className="space-y-4 py-4">
-          <div className="flex gap-2">
-            <Input 
-              placeholder="New stage name..." 
-              value={newStageName} 
-              onChange={(e) => setNewStageName(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
-            />
-            <Button size="icon" onClick={handleAdd} disabled={!newStageName.trim()}>
-              <Plus className="h-4 w-4" />
+          <div className="flex flex-col gap-3 p-4 bg-muted/50 rounded-lg">
+            <div className="grid gap-2">
+              <Label htmlFor="stage-name">Stage Name</Label>
+              <Input 
+                id="stage-name"
+                placeholder="e.g. Pre-tender Review" 
+                value={newStageName} 
+                onChange={(e) => setNewStageName(e.target.value)}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="stage-desc">Description</Label>
+              <Textarea 
+                id="stage-desc"
+                placeholder="Describe what happens in this stage..." 
+                value={newStageDesc} 
+                onChange={(e) => setNewStageDesc(e.target.value)}
+                className="min-h-[60px]"
+              />
+            </div>
+            <Button size="sm" onClick={handleAdd} disabled={!newStageName.trim()} className="w-full">
+              <Plus className="h-4 w-4 mr-2" /> Add Stage
             </Button>
           </div>
 
           <div className="border rounded-md divide-y max-h-[300px] overflow-y-auto">
             {localStages.map((stage, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-card">
-                <span className="text-sm font-medium">{stage}</span>
-                <div className="flex items-center gap-1">
+              <div key={index} className="flex items-center justify-between p-3 bg-card gap-4">
+                <div className="flex flex-col min-w-0">
+                  <span className="text-sm font-bold truncate">{stage.name}</span>
+                  <span className="text-xs text-muted-foreground truncate italic">{stage.description}</span>
+                </div>
+                <div className="flex items-center gap-1 shrink-0">
                   <Button 
                     variant="ghost" 
                     size="icon" 

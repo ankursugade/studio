@@ -18,7 +18,7 @@ import { format } from "date-fns";
 import { NewProjectModal } from "@/components/kanban/new-project-modal";
 
 export default function ProjectsPage() {
-  const { currentUser, login, users, projects, addProject, isInitialized } = useQSStore();
+  const { currentUser, login, users, projects, stages, addProject, isInitialized } = useQSStore();
 
   if (!isInitialized) return null;
 
@@ -59,27 +59,30 @@ export default function ProjectsPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {myProjects.length > 0 ? myProjects.map((p) => (
-                    <TableRow key={p.id}>
-                      <TableCell className="font-medium">{p.title}</TableCell>
-                      <TableCell className="text-muted-foreground">{p.client}</TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className="bg-secondary/20 text-secondary-foreground border-secondary">
-                          {p.currentStage}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        {p.value ? new Intl.NumberFormat('en-US', {
-                          style: 'currency',
-                          currency: 'USD',
-                          maximumFractionDigits: 0
-                        }).format(p.value) : 'N/A'}
-                      </TableCell>
-                      <TableCell className="text-right text-muted-foreground">
-                        {format(new Date(p.updatedAt), 'MMM dd, yyyy')}
-                      </TableCell>
-                    </TableRow>
-                  )) : (
+                  {myProjects.length > 0 ? myProjects.map((p) => {
+                    const stage = stages.find(s => s.id === p.currentStage);
+                    return (
+                      <TableRow key={p.id}>
+                        <TableCell className="font-medium">{p.title}</TableCell>
+                        <TableCell className="text-muted-foreground">{p.client}</TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="bg-secondary/20 text-secondary-foreground border-secondary">
+                            {stage?.name || p.currentStage}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          {p.value ? new Intl.NumberFormat('en-US', {
+                            style: 'currency',
+                            currency: 'USD',
+                            maximumFractionDigits: 0
+                          }).format(p.value) : 'N/A'}
+                        </TableCell>
+                        <TableCell className="text-right text-muted-foreground">
+                          {format(new Date(p.updatedAt), 'MMM dd, yyyy')}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  }) : (
                     <TableRow>
                       <TableCell colSpan={5} className="h-40 text-center text-muted-foreground">
                         No projects currently assigned to you.
