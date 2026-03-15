@@ -15,6 +15,7 @@ export const MOCK_PROJECTS: Project[] = [
     client: 'BuildCorp', 
     assignedTo: 'u1', 
     currentStage: 'inquiry', 
+    status: 'active',
     updatedAt: new Date(), 
     value: 450000,
     mainCategory: 'Interior fit out',
@@ -27,7 +28,8 @@ export const MOCK_PROJECTS: Project[] = [
     areaSqFt: 15000,
     levels: 3,
     notes: 'Urgent priority for Q3.',
-    tasks: []
+    tasks: [],
+    logs: []
   },
   { 
     id: 'p2', 
@@ -35,6 +37,7 @@ export const MOCK_PROJECTS: Project[] = [
     client: 'HealthState', 
     assignedTo: 'u2', 
     currentStage: 'take-off', 
+    status: 'active',
     updatedAt: new Date(), 
     value: 1200000,
     mainCategory: 'Interior + Base build',
@@ -47,6 +50,7 @@ export const MOCK_PROJECTS: Project[] = [
     areaSqFt: 50000,
     levels: 5,
     notes: 'Medical grade certification required.',
-    tasks: []
+    tasks: [],
+    logs: []
   }
 ];

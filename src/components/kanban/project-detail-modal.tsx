@@ -17,8 +17,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Project, User, ProjectMainCategory, ProjectSubCategory, ContractType, PricingModel } from "@/lib/types";
 import { Separator } from "@/components/ui/separator";
-import { Plus, Trash2, CheckSquare, Square, Calculator, Layers, Ruler } from "lucide-react";
+import { Plus, Trash2, CheckSquare, Square, Calculator, Layers, Ruler, Trophy, XCircle, RotateCcw } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
 
 interface ProjectDetailModalProps {
   project: Project | null;
@@ -51,6 +52,13 @@ export function ProjectDetailModal({ project, open, onOpenChange, users, onUpdat
     }
   };
 
+  const setStatus = (status: 'active' | 'won' | 'lost') => {
+    if (formData && project) {
+      onUpdate(project.id, { ...formData, status });
+      onOpenChange(false);
+    }
+  };
+
   const addTask = () => {
     if (!newTask.trim()) return;
     const task = {
@@ -77,19 +85,50 @@ export function ProjectDetailModal({ project, open, onOpenChange, users, onUpdat
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[700px] h-[85vh] flex flex-col p-0">
-        <DialogHeader className="p-6 border-b">
-          <DialogTitle className="text-2xl font-bold flex items-center gap-2">
-            <Calculator className="h-6 w-6 text-accent" />
-            Project Parameters
-          </DialogTitle>
-          <DialogDescription>
-            Modify detailed technical and commercial parameters for {project?.title}.
-          </DialogDescription>
+      <DialogContent className="sm:max-w-[750px] h-[85vh] flex flex-col p-0">
+        <DialogHeader className="p-6 border-b flex flex-row items-center justify-between">
+          <div>
+            <DialogTitle className="text-2xl font-bold flex items-center gap-2">
+              <Calculator className="h-6 w-6 text-accent" />
+              Project Parameters
+            </DialogTitle>
+            <DialogDescription>
+              Detailed technical and commercial parameters for {project?.title}.
+            </DialogDescription>
+          </div>
+          <div className="flex items-center gap-2">
+            {formData.status === 'won' && <Badge className="bg-green-600">WON</Badge>}
+            {formData.status === 'lost' && <Badge variant="destructive">LOST</Badge>}
+            {formData.status === 'active' && <Badge variant="outline">ACTIVE</Badge>}
+          </div>
         </DialogHeader>
 
         <ScrollArea className="flex-1 p-6">
           <div className="space-y-8">
+            {/* Project Outcome Actions */}
+            <div className="bg-muted/30 p-4 rounded-xl border border-dashed flex items-center justify-between">
+              <div className="space-y-1">
+                <h4 className="text-sm font-bold">Project Outcome</h4>
+                <p className="text-xs text-muted-foreground">Finalize this project by marking it as WON or LOST.</p>
+              </div>
+              <div className="flex gap-2">
+                {formData.status !== 'active' ? (
+                  <Button variant="outline" size="sm" onClick={() => setStatus('active')} className="gap-2">
+                    <RotateCcw className="h-4 w-4" /> Reactivate
+                  </Button>
+                ) : (
+                  <>
+                    <Button variant="outline" size="sm" onClick={() => setStatus('lost')} className="text-destructive hover:bg-destructive/5 gap-2">
+                      <XCircle className="h-4 w-4" /> Mark LOST
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => setStatus('won')} className="text-green-600 hover:bg-green-50 border-green-200 gap-2">
+                      <Trophy className="h-4 w-4" /> Mark WON
+                    </Button>
+                  </>
+                )}
+              </div>
+            </div>
+
             {/* Basic Info */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">

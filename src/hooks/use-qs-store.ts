@@ -53,7 +53,7 @@ export function useQSStore() {
     localStorage.removeItem('qs_flow_user');
   };
 
-  const addProject = (projectData: Omit<Project, 'id' | 'updatedAt' | 'currentStage' | 'logs'>) => {
+  const addProject = (projectData: Omit<Project, 'id' | 'updatedAt' | 'currentStage' | 'logs' | 'status'>) => {
     const initialLog: ProjectLogEntry = {
       id: Math.random().toString(36).substr(2, 9),
       userId: currentUser?.id || 'unknown',
@@ -64,6 +64,7 @@ export function useQSStore() {
       ...projectData,
       id: Math.random().toString(36).substr(2, 9),
       currentStage: stages[0]?.id || 'inquiry',
+      status: 'active',
       updatedAt: new Date(),
       logs: [initialLog],
     };
@@ -77,6 +78,9 @@ export function useQSStore() {
         const logMessages: string[] = [];
 
         // Detect specific changes for automatic logging
+        if (updates.status && updates.status !== p.status) {
+          logMessages.push(`Status changed to ${updates.status.toUpperCase()}`);
+        }
         if (updates.title && updates.title !== p.title) logMessages.push(`Title updated to "${updates.title}"`);
         if (updates.client && updates.client !== p.client) logMessages.push(`Client updated to "${updates.client}"`);
         if (updates.areaSqFt !== undefined && updates.areaSqFt !== p.areaSqFt) logMessages.push(`Area updated to ${updates.areaSqFt} sq.ft.`);

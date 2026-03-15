@@ -28,6 +28,9 @@ export function KanbanBoard({ projects, users, stages, onUpdateStage }: KanbanBo
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [logProject, setLogProject] = useState<Project | null>(null);
 
+  // Only show active projects on the Kanban board
+  const activeProjects = projects.filter(p => p.status === 'active');
+
   const handleDragStart = (e: React.DragEvent, projectId: string) => {
     e.dataTransfer.setData("projectId", projectId);
   };
@@ -35,7 +38,7 @@ export function KanbanBoard({ projects, users, stages, onUpdateStage }: KanbanBo
   const handleDrop = (e: React.DragEvent, toStage: QSStage) => {
     e.preventDefault();
     const projectId = e.dataTransfer.getData("projectId");
-    const project = projects.find(p => p.id === projectId);
+    const project = activeProjects.find(p => p.id === projectId);
     
     if (!project || project.currentStage === toStage.id) return;
 
@@ -68,7 +71,7 @@ export function KanbanBoard({ projects, users, stages, onUpdateStage }: KanbanBo
         <div className="flex gap-6 h-full p-2 min-h-[calc(100vh-200px)]">
           <TooltipProvider>
             {stages.map((stage) => {
-              const stageProjects = projects.filter(p => p.currentStage === stage.id);
+              const stageProjects = activeProjects.filter(p => p.currentStage === stage.id);
               return (
                 <div 
                   key={stage.id}

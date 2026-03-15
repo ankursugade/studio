@@ -19,13 +19,23 @@ export default function Home() {
     return <AvatarLogin users={users} onSelect={login} />;
   }
 
-  // Aggregate project count per stage for the chart
+  // Aggregate active project count per stage for the chart
+  const activeProjects = projects.filter(p => p.status === 'active');
+  
   const stageData = stages.map(stage => ({
     name: stage.name,
-    count: projects.filter(p => p.currentStage === stage.id).length
+    count: activeProjects.filter(p => p.currentStage === stage.id).length
   }));
 
-  const wonStage = stages.find(s => s.id === 'won') || stages[stages.length - 1];
+  // Add Won/Lost as separate totals for visualization if desired, or just keep active pipeline
+  const wonCount = projects.filter(p => p.status === 'won').length;
+  const lostCount = projects.filter(p => p.status === 'lost').length;
+
+  const summaryData = [
+    ...stageData,
+    { name: 'WON', count: wonCount },
+    { name: 'LOST', count: lostCount }
+  ];
 
   return (
     <SidebarProvider>
@@ -43,18 +53,18 @@ export default function Home() {
           </header>
 
           <main className="p-6 space-y-8 max-w-[1400px] mx-auto">
-            <StatsGrid projects={projects} wonStageId={wonStage?.id} />
+            <StatsGrid projects={projects} />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2 space-y-8">
                 <Card className="border-none shadow-sm">
                   <CardHeader>
-                    <CardTitle className="text-lg font-bold">Workflow Distribution</CardTitle>
+                    <CardTitle className="text-lg font-bold">Project Distribution (Pipeline + Results)</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="h-[300px] w-full mt-4">
                       <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={stageData}>
+                        <BarChart data={summaryData}>
                           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eee" />
                           <XAxis 
                             dataKey="name" 
@@ -71,12 +81,14 @@ export default function Home() {
                             cursor={{ fill: 'rgba(0,0,0,0.05)' }}
                           />
                           <Bar dataKey="count" radius={[4, 4, 0, 0]}>
-                            {stageData.map((entry, index) => (
-                              <Cell 
-                                key={`cell-${index}`} 
-                                fill={index % 2 === 0 ? "hsl(var(--accent))" : "hsl(var(--secondary))"} 
-                              />
-                            ))}
+                            {summaryData.map((entry, index) => {
+                              let fill = "hsl(var(--accent))";
+                              if (entry.name === 'WON') fill = "hsl(142, 76%, 36%)"; // green
+                              if (entry.name === 'LOST') fill = "hsl(0, 84%, 60%)"; // red
+                              else if (index % 2 !== 0) fill = "hsl(var(--secondary))";
+                              
+                              return <Cell key={`cell-${index}`} fill={fill} />;
+                            })}
                           </Bar>
                         </BarChart>
                       </ResponsiveContainer>

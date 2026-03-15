@@ -11,8 +11,7 @@ export const INITIAL_QS_STAGES: QSStage[] = [
   { id: 'estimation', name: 'Estimation', description: 'Applying rates and calculating total costs.' },
   { id: 'review', name: 'Review', description: 'Internal peer review and margin adjustment.' },
   { id: 'tender-submission', name: 'Tender Submission', description: 'Final bid documents sent to the client.' },
-  { id: 'post-tender', name: 'Post-Tender', description: 'Negotiations and project award phase.' },
-  { id: 'won', name: 'WON', description: 'Project successfully awarded and closed.' }
+  { id: 'post-tender', name: 'Post-Tender', description: 'Negotiations and project award phase.' }
 ];
 
 export interface User {
@@ -40,6 +39,7 @@ export type ProjectMainCategory = 'Interior fit out' | 'Interior + Base build' |
 export type ProjectSubCategory = 'Office' | 'Office + Lab' | 'Lab Only';
 export type ContractType = 'Lumsum' | 'Measurable';
 export type PricingModel = 'Close Book' | 'Open Book';
+export type ProjectStatus = 'active' | 'won' | 'lost';
 
 export interface Project {
   id: string;
@@ -47,6 +47,7 @@ export interface Project {
   client: string;
   assignedTo: string; // MEP Estimation Owner
   currentStage: string; // References QSStage.id
+  status: ProjectStatus;
   updatedAt: Date;
   value?: number;
   
