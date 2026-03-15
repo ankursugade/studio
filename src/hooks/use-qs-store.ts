@@ -19,6 +19,7 @@ export function useQSStore() {
     const savedRevisions = localStorage.getItem('qs_flow_revisions');
 
     if (savedUser) setCurrentUser(JSON.parse(savedUser));
+    
     if (savedStages) {
       const parsedStages = JSON.parse(savedStages);
       if (parsedStages && parsedStages.length > 0) {
@@ -31,13 +32,16 @@ export function useQSStore() {
       if (parsed && Array.isArray(parsed) && parsed.length > 0) {
         setProjects(parsed.map((p: any) => ({ 
           ...p, 
+          // Ensure projects have status (migration for older data)
+          status: p.status || 'active',
           updatedAt: new Date(p.updatedAt),
           logs: p.logs?.map((l: any) => ({ ...l, timestamp: new Date(l.timestamp) })) || []
         })));
       } else {
-        // If stored projects is empty, use MOCK_PROJECTS
         setProjects(MOCK_PROJECTS);
       }
+    } else {
+      setProjects(MOCK_PROJECTS);
     }
     
     if (savedRevisions) {
