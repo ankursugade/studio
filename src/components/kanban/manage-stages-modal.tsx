@@ -16,8 +16,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { QSStage } from "@/lib/types";
-import { Settings2, Plus, Trash2, ArrowUp, ArrowDown, Pencil, Check, X } from "lucide-react";
+import { Settings2, Plus, Trash2, ArrowUp, ArrowDown, Pencil, Check, X, GripVertical } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 
 interface ManageStagesModalProps {
   stages: QSStage[];
@@ -91,61 +92,89 @@ export function ManageStagesModal({ stages, onUpdate }: ManageStagesModalProps) 
       }
     }}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2">
+        <Button variant="outline" size="sm" className="gap-2 font-semibold">
           <Settings2 className="h-4 w-4" />
           Manage Stages
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[550px] h-[70vh] flex flex-col p-0">
-        <div className="p-6 pb-2">
+      <DialogContent className="sm:max-w-[550px] h-[75vh] flex flex-col p-0 overflow-hidden border-none shadow-2xl">
+        <div className="p-6 bg-white border-b">
           <DialogHeader>
-            <DialogTitle>Workflow Stages</DialogTitle>
-            <DialogDescription>
-              Configure the stages of your MEP QS pipeline. Hover over titles on the board to see descriptions.
+            <DialogTitle className="text-2xl font-bold">Workflow Pipeline</DialogTitle>
+            <DialogDescription className="text-sm text-muted-foreground">
+              Define the sequence of stages for your MEP Quantity Surveying projects.
             </DialogDescription>
           </DialogHeader>
         </div>
         
-        <ScrollArea className="flex-1 px-6">
-          <div className="space-y-6 py-4">
-            <div className="flex flex-col gap-3 p-4 bg-muted/30 rounded-lg border border-dashed">
-              <h4 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Add New Stage</h4>
-              <div className="grid gap-2">
-                <Label htmlFor="stage-name" className="text-xs">Stage Name</Label>
-                <Input 
-                  id="stage-name"
-                  placeholder="e.g. Pre-tender Review" 
-                  value={newStageName} 
-                  onChange={(e) => setNewStageName(e.target.value)}
-                />
+        <ScrollArea className="flex-1 px-6 bg-background/50">
+          <div className="space-y-8 py-6">
+            {/* Add New Stage Section */}
+            <div className="bg-white p-5 rounded-xl border shadow-sm space-y-4">
+              <div className="flex items-center gap-2 mb-1">
+                <div className="p-1 bg-accent/10 rounded">
+                  <Plus className="h-4 w-4 text-accent" />
+                </div>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Add New Stage</h4>
               </div>
-              <div className="grid gap-2">
-                <Label htmlFor="stage-desc" className="text-xs">Description (shown on hover)</Label>
-                <Textarea 
-                  id="stage-desc"
-                  placeholder="Briefly describe the objective of this stage..." 
-                  value={newStageDesc} 
-                  onChange={(e) => setNewStageDesc(e.target.value)}
-                  className="min-h-[60px] resize-none"
-                />
+              
+              <div className="grid grid-cols-1 gap-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="stage-name" className="text-[11px] font-bold text-muted-foreground ml-1">STAGE NAME</Label>
+                  <Input 
+                    id="stage-name"
+                    placeholder="e.g. Pre-tender Review" 
+                    value={newStageName} 
+                    onChange={(e) => setNewStageName(e.target.value)}
+                    className="h-9 focus:ring-accent"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="stage-desc" className="text-[11px] font-bold text-muted-foreground ml-1">DESCRIPTION</Label>
+                  <Textarea 
+                    id="stage-desc"
+                    placeholder="What happens in this stage?" 
+                    value={newStageDesc} 
+                    onChange={(e) => setNewStageDesc(e.target.value)}
+                    className="min-h-[70px] resize-none text-sm"
+                  />
+                </div>
               </div>
-              <Button size="sm" onClick={handleAdd} disabled={!newStageName.trim()} className="w-full">
-                <Plus className="h-4 w-4 mr-2" /> Add Stage
+              
+              <Button 
+                size="sm" 
+                onClick={handleAdd} 
+                disabled={!newStageName.trim()} 
+                className="w-full bg-accent hover:bg-accent/90 text-white font-bold"
+              >
+                Create Stage
               </Button>
             </div>
 
-            <div className="space-y-2 pb-4">
-              <h4 className="text-sm font-bold uppercase tracking-wider text-muted-foreground px-1">Active Pipeline</h4>
-              <div className="border rounded-md divide-y bg-white">
+            {/* Active Pipeline List */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between px-1">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Current Pipeline</h4>
+                <span className="text-[10px] font-medium bg-muted px-2 py-0.5 rounded-full">{localStages.length} STAGES</span>
+              </div>
+              
+              <div className="space-y-2.5">
                 {localStages.map((stage, index) => (
-                  <div key={stage.id} className="flex flex-col p-3 transition-colors hover:bg-muted/5">
+                  <div 
+                    key={stage.id} 
+                    className={cn(
+                      "group bg-white rounded-lg border p-3 transition-all duration-200",
+                      editingIndex === index ? "ring-2 ring-accent/20 border-accent" : "hover:border-accent/40 hover:shadow-sm"
+                    )}
+                  >
                     {editingIndex === index ? (
-                      <div className="space-y-3 p-1">
+                      <div className="space-y-3">
                         <Input 
                           value={editName} 
                           onChange={(e) => setEditName(e.target.value)} 
                           placeholder="Stage Name"
-                          className="h-8 font-bold"
+                          className="h-9 font-bold text-sm"
+                          autoFocus
                         />
                         <Textarea 
                           value={editDesc} 
@@ -154,36 +183,36 @@ export function ManageStagesModal({ stages, onUpdate }: ManageStagesModalProps) 
                           className="min-h-[60px] text-xs resize-none"
                         />
                         <div className="flex justify-end gap-2">
-                          <Button variant="ghost" size="sm" onClick={() => setEditingIndex(null)} className="h-7 px-2">
-                            <X className="h-3 w-3 mr-1" /> Cancel
+                          <Button variant="ghost" size="sm" onClick={() => setEditingIndex(null)} className="h-8 text-xs">
+                            Cancel
                           </Button>
-                          <Button variant="secondary" size="sm" onClick={saveEdit} className="h-7 px-2">
-                            <Check className="h-3 w-3 mr-1" /> Done
+                          <Button variant="secondary" size="sm" onClick={saveEdit} className="h-8 text-xs font-bold">
+                            <Check className="h-3 w-3 mr-1" /> Save Changes
                           </Button>
                         </div>
                       </div>
                     ) : (
-                      <div className="flex items-center justify-between gap-4">
-                        <div className="flex flex-col min-w-0 flex-1">
-                          <span className="text-sm font-bold truncate">{stage.name}</span>
-                          <span className="text-[11px] text-muted-foreground truncate italic">
-                            {stage.description}
-                          </span>
+                      <div className="flex items-center gap-3">
+                        <div className="flex flex-col items-center gap-0.5 text-muted-foreground/30">
+                          <GripVertical className="h-4 w-4" />
                         </div>
-                        <div className="flex items-center gap-1 shrink-0">
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="h-8 w-8 text-muted-foreground hover:text-accent"
-                            onClick={() => startEditing(index)}
-                          >
-                            <Pencil className="h-3.5 w-3.5" />
-                          </Button>
-                          <div className="flex flex-col gap-0 border-x px-1">
+                        
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-bold text-muted-foreground/40 font-mono">{(index + 1).toString().padStart(2, '0')}</span>
+                            <span className="text-sm font-bold truncate">{stage.name}</span>
+                          </div>
+                          <p className="text-[11px] text-muted-foreground truncate italic mt-0.5 leading-relaxed">
+                            {stage.description}
+                          </p>
+                        </div>
+
+                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="flex flex-col gap-0.5 mr-1 border-r pr-1">
                             <Button 
                               variant="ghost" 
                               size="icon" 
-                              className="h-5 w-5"
+                              className="h-6 w-6 text-muted-foreground hover:bg-muted"
                               onClick={() => handleMove(index, 'up')}
                               disabled={index === 0}
                             >
@@ -192,17 +221,26 @@ export function ManageStagesModal({ stages, onUpdate }: ManageStagesModalProps) 
                             <Button 
                               variant="ghost" 
                               size="icon" 
-                              className="h-5 w-5"
+                              className="h-6 w-6 text-muted-foreground hover:bg-muted"
                               onClick={() => handleMove(index, 'down')}
                               disabled={index === localStages.length - 1}
                             >
                               <ArrowDown className="h-3 w-3" />
                             </Button>
                           </div>
+                          
                           <Button 
                             variant="ghost" 
                             size="icon" 
-                            className="h-8 w-8 text-destructive/60 hover:text-destructive"
+                            className="h-8 w-8 text-muted-foreground hover:text-accent hover:bg-accent/5"
+                            onClick={() => startEditing(index)}
+                          >
+                            <Pencil className="h-3.5 w-3.5" />
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-8 w-8 text-destructive/40 hover:text-destructive hover:bg-destructive/5"
                             onClick={() => handleRemove(index)}
                           >
                             <Trash2 className="h-3.5 w-3.5" />
@@ -212,9 +250,11 @@ export function ManageStagesModal({ stages, onUpdate }: ManageStagesModalProps) 
                     )}
                   </div>
                 ))}
+                
                 {localStages.length === 0 && (
-                  <div className="p-8 text-center text-sm text-muted-foreground italic">
-                    No stages defined.
+                  <div className="py-12 flex flex-col items-center justify-center text-center space-y-2 bg-muted/20 rounded-xl border-2 border-dashed">
+                    <Settings2 className="h-8 w-8 text-muted-foreground/20" />
+                    <p className="text-sm text-muted-foreground font-medium italic">No stages defined in your pipeline.</p>
                   </div>
                 )}
               </div>
@@ -222,11 +262,11 @@ export function ManageStagesModal({ stages, onUpdate }: ManageStagesModalProps) 
           </div>
         </ScrollArea>
 
-        <div className="p-6 pt-2 border-t">
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-            <Button onClick={handleSave} className="bg-primary text-primary-foreground">
-              Save All Changes
+        <div className="p-6 bg-white border-t">
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="ghost" onClick={() => setOpen(false)} className="font-semibold">Discard</Button>
+            <Button onClick={handleSave} className="bg-primary text-primary-foreground font-bold px-8 shadow-lg shadow-primary/20">
+              Apply Workflow
             </Button>
           </DialogFooter>
         </div>
