@@ -66,9 +66,9 @@ export function KanbanBoard({ projects, users, stages, onUpdateStage }: KanbanBo
   };
 
   return (
-    <div className="h-full">
-      <ScrollArea className="h-full w-full pb-6">
-        <div className="flex gap-6 h-full p-2 min-h-[calc(100vh-200px)]">
+    <div className="h-full flex flex-col">
+      <ScrollArea className="flex-1 w-full pb-6">
+        <div className="flex gap-6 p-4 min-h-full items-start">
           <TooltipProvider>
             {stages.map((stage) => {
               const stageProjects = activeProjects.filter(p => p.currentStage === stage.id);
@@ -81,9 +81,9 @@ export function KanbanBoard({ projects, users, stages, onUpdateStage }: KanbanBo
                 >
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <div className="flex items-center justify-between bg-white p-4 rounded-lg border-b-2 border-primary shadow-sm cursor-help">
-                        <h3 className="font-bold text-sm uppercase tracking-wider">{stage.name}</h3>
-                        <span className="bg-secondary/50 text-secondary-foreground text-xs font-bold px-2 py-0.5 rounded-full">
+                      <div className="flex items-center justify-between bg-white p-4 rounded-lg border-b-2 border-primary shadow-sm cursor-help sticky top-0 z-10">
+                        <h3 className="font-bold text-sm uppercase tracking-wider truncate mr-2">{stage.name}</h3>
+                        <span className="bg-secondary/50 text-secondary-foreground text-xs font-bold px-2 py-0.5 rounded-full shrink-0">
                           {stageProjects.length}
                         </span>
                       </div>
@@ -93,7 +93,7 @@ export function KanbanBoard({ projects, users, stages, onUpdateStage }: KanbanBo
                     </TooltipContent>
                   </Tooltip>
                   
-                  <div className="flex flex-col gap-3 h-full rounded-lg bg-muted/30 p-2">
+                  <div className="flex flex-col gap-3 min-h-[150px] rounded-lg bg-muted/30 p-2 border-2 border-transparent hover:border-accent/10 transition-colors">
                     {stageProjects.map((project) => (
                       <ProjectCard
                         key={project.id}
@@ -105,8 +105,8 @@ export function KanbanBoard({ projects, users, stages, onUpdateStage }: KanbanBo
                       />
                     ))}
                     {stageProjects.length === 0 && (
-                      <div className="flex items-center justify-center h-20 border-2 border-dashed border-muted-foreground/20 rounded-lg text-xs text-muted-foreground/50">
-                        Empty stage
+                      <div className="flex items-center justify-center h-24 border-2 border-dashed border-muted-foreground/10 rounded-lg text-[10px] text-muted-foreground/40 uppercase tracking-widest text-center px-4">
+                        Drop items here
                       </div>
                     )}
                   </div>

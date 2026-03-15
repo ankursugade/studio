@@ -20,14 +20,18 @@ export function useQSStore() {
 
     if (savedUser) setCurrentUser(JSON.parse(savedUser));
     if (savedStages) setStages(JSON.parse(savedStages));
+    
     if (savedProjects) {
       const parsed = JSON.parse(savedProjects);
-      setProjects(parsed.map((p: any) => ({ 
-        ...p, 
-        updatedAt: new Date(p.updatedAt),
-        logs: p.logs?.map((l: any) => ({ ...l, timestamp: new Date(l.timestamp) })) || []
-      })));
+      if (parsed && parsed.length > 0) {
+        setProjects(parsed.map((p: any) => ({ 
+          ...p, 
+          updatedAt: new Date(p.updatedAt),
+          logs: p.logs?.map((l: any) => ({ ...l, timestamp: new Date(l.timestamp) })) || []
+        })));
+      }
     }
+    
     if (savedRevisions) {
       const parsed = JSON.parse(savedRevisions);
       setRevisions(parsed.map((r: any) => ({ ...r, timestamp: new Date(r.timestamp) })));
@@ -40,8 +44,9 @@ export function useQSStore() {
     if (isInitialized) {
       localStorage.setItem('qs_flow_projects', JSON.stringify(projects));
       localStorage.setItem('qs_flow_revisions', JSON.stringify(revisions));
+      localStorage.setItem('qs_flow_stages', JSON.stringify(stages));
     }
-  }, [projects, revisions, isInitialized]);
+  }, [projects, revisions, stages, isInitialized]);
 
   const login = (user: User) => {
     setCurrentUser(user);
@@ -77,7 +82,6 @@ export function useQSStore() {
         const newLogs = [...(p.logs || [])];
         const logMessages: string[] = [];
 
-        // Detect specific changes for automatic logging
         if (updates.status && updates.status !== p.status) {
           logMessages.push(`Status changed to ${updates.status.toUpperCase()}`);
         }
@@ -89,7 +93,6 @@ export function useQSStore() {
           logMessages.push(`Reassigned to ${newUser}`);
         }
         
-        // Task changes
         if (updates.tasks) {
           const oldTasks = p.tasks || [];
           const newTasks = updates.tasks || [];
@@ -111,12 +114,10 @@ export function useQSStore() {
           });
         }
 
-        // General update log if no specific field was caught
         if (logMessages.length === 0 && Object.keys(updates).length > 0) {
           logMessages.push("Project parameters updated");
         }
 
-        // Add each log message
         logMessages.reverse().forEach(msg => {
           newLogs.unshift({
             id: Math.random().toString(36).substr(2, 9),
@@ -173,7 +174,6 @@ export function useQSStore() {
 
   const updateStages = (newStages: QSStage[]) => {
     setStages(newStages);
-    localStorage.setItem('qs_flow_stages', JSON.stringify(newStages));
   };
 
   return {
