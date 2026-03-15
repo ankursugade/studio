@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
-import { GripVertical, Building2, User2, DollarSign, Tag, Briefcase } from "lucide-react";
+import { GripVertical, Building2, User2, Ruler, Tag, Briefcase, CheckSquare, ShieldCheck } from "lucide-react";
 
 interface ProjectCardProps {
   project: Project;
@@ -16,11 +16,7 @@ interface ProjectCardProps {
 }
 
 export function ProjectCard({ project, assignedUser, onDragStart, onClick }: ProjectCardProps) {
-  const formattedValue = project.value ? new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    maximumFractionDigits: 0
-  }).format(project.value) : 'N/A';
+  const openTasksCount = project.tasks?.filter(t => !t.isCompleted).length || 0;
 
   return (
     <Card 
@@ -46,16 +42,32 @@ export function ProjectCard({ project, assignedUser, onDragStart, onClick }: Pro
             <Building2 className="h-3 w-3" />
             <span className="truncate">{project.client}</span>
           </div>
-          <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground font-medium">
-            <Briefcase className="h-3 w-3" />
-            <span>{project.contractType} - {project.pricingModel}</span>
-          </div>
-          {project.value && (
-            <div className="flex items-center gap-1.5 text-xs font-bold text-secondary-foreground bg-secondary/30 w-fit px-1.5 py-0.5 rounded">
-              <DollarSign className="h-3 w-3" />
-              <span>{formattedValue}</span>
+          
+          <div className="grid grid-cols-2 gap-2 mt-1">
+            <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground font-medium">
+              <Ruler className="h-3 w-3 text-accent/70" />
+              <span>{project.areaSqFt?.toLocaleString()} sq.ft.</span>
             </div>
-          )}
+            {project.mepDesignReviewer && (
+              <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground font-medium">
+                <ShieldCheck className="h-3 w-3 text-secondary-foreground/70" />
+                <span className="truncate">{project.mepDesignReviewer}</span>
+              </div>
+            )}
+          </div>
+
+          <div className="flex items-center justify-between mt-1">
+             <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+              <Briefcase className="h-3 w-3" />
+              <span>{project.contractType}</span>
+            </div>
+            {openTasksCount > 0 && (
+              <Badge variant="secondary" className="h-5 px-1.5 text-[9px] font-bold bg-accent/10 text-accent border-accent/20">
+                <CheckSquare className="h-2.5 w-2.5 mr-1" />
+                {openTasksCount} Open Tasks
+              </Badge>
+            )}
+          </div>
         </div>
 
         <div className="flex items-center justify-between mt-2 pt-2 border-t border-muted">
