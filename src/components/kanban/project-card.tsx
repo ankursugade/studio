@@ -40,18 +40,31 @@ export function ProjectCard({ project, assignedUser, onDragStart, onClick }: Pro
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <Building2 className="h-3 w-3" />
-            <span className="truncate">{project.client}</span>
+            <span className="truncate font-semibold">{project.client}</span>
           </div>
           
-          <div className="grid grid-cols-2 gap-2 mt-1">
-            <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground font-medium">
+          <div className="grid grid-cols-2 gap-x-3 gap-y-1 mt-1">
+            <div className="flex items-center gap-1.5 text-[9px] text-muted-foreground font-medium">
               <Ruler className="h-3 w-3 text-accent/70" />
-              <span>{project.areaSqFt?.toLocaleString()} sq.ft.</span>
+              <span className="truncate">{project.areaSqFt?.toLocaleString()} sq.ft.</span>
             </div>
+            
+            <div className="flex items-center gap-1.5 text-[9px] text-muted-foreground font-medium">
+              <User2 className="h-3 w-3 text-primary/70" />
+              <span className="truncate">{project.projectQsOwner}</span>
+            </div>
+
             {project.mepDesignReviewer && (
-              <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground font-medium">
+              <div className="flex items-center gap-1.5 text-[9px] text-muted-foreground font-medium">
                 <ShieldCheck className="h-3 w-3 text-secondary-foreground/70" />
-                <span className="truncate">{project.mepDesignReviewer}</span>
+                <span className="truncate">MEP: {project.mepDesignReviewer}</span>
+              </div>
+            )}
+
+            {project.itDesignReviewer && (
+              <div className="flex items-center gap-1.5 text-[9px] text-muted-foreground font-medium">
+                <ShieldCheck className="h-3 w-3 text-secondary-foreground/70" />
+                <span className="truncate">IT: {project.itDesignReviewer}</span>
               </div>
             )}
           </div>
@@ -64,7 +77,7 @@ export function ProjectCard({ project, assignedUser, onDragStart, onClick }: Pro
             {openTasksCount > 0 && (
               <Badge variant="secondary" className="h-5 px-1.5 text-[9px] font-bold bg-accent/10 text-accent border-accent/20">
                 <CheckSquare className="h-2.5 w-2.5 mr-1" />
-                {openTasksCount} Open Tasks
+                {openTasksCount} Tasks
               </Badge>
             )}
           </div>
@@ -80,7 +93,7 @@ export function ProjectCard({ project, assignedUser, onDragStart, onClick }: Pro
               {assignedUser?.name.split(' ')[0]}
             </span>
           </div>
-          <span className="text-[10px] text-muted-foreground">
+          <span className="text-[9px] text-muted-foreground">
             {formatDistanceToNow(project.updatedAt, { addSuffix: true })}
           </span>
         </div>
