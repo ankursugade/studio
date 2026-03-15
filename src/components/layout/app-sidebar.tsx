@@ -34,9 +34,9 @@ export function AppSidebar() {
   return (
     <Sidebar variant="sidebar" collapsible="icon">
       <SidebarHeader className="border-b border-sidebar-border h-16 flex items-center px-6">
-        <div className="flex items-center gap-2 font-bold text-xl tracking-tight text-white group-data-[collapsible=icon]:hidden">
-          <Calculator className="w-6 h-6 text-accent" />
-          <span>QS FLOW</span>
+        <div className="flex items-center gap-2 font-bold text-lg tracking-tight text-white group-data-[collapsible=icon]:hidden">
+          <Calculator className="w-6 h-6 text-accent shrink-0" />
+          <span className="leading-tight">MEP Estimation Project Management</span>
         </div>
       </SidebarHeader>
       
