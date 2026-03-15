@@ -15,9 +15,10 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
+import { NewProjectModal } from "@/components/kanban/new-project-modal";
 
 export default function ProjectsPage() {
-  const { currentUser, login, users, projects, isInitialized } = useQSStore();
+  const { currentUser, login, users, projects, addProject, isInitialized } = useQSStore();
 
   if (!isInitialized) return null;
 
@@ -37,8 +38,11 @@ export default function ProjectsPage() {
               <SidebarTrigger />
               <h1 className="text-xl font-bold tracking-tight">My Projects</h1>
             </div>
-            <div className="text-sm text-muted-foreground">
-              {myProjects.length} projects assigned
+            <div className="flex items-center gap-4">
+              <div className="text-sm text-muted-foreground hidden sm:block">
+                {myProjects.length} projects assigned
+              </div>
+              <NewProjectModal users={users} onAdd={addProject} />
             </div>
           </header>
 
@@ -72,7 +76,7 @@ export default function ProjectsPage() {
                         }).format(p.value) : 'N/A'}
                       </TableCell>
                       <TableCell className="text-right text-muted-foreground">
-                        {format(p.updatedAt, 'MMM dd, yyyy')}
+                        {format(new Date(p.updatedAt), 'MMM dd, yyyy')}
                       </TableCell>
                     </TableRow>
                   )) : (

@@ -29,6 +29,16 @@ export function useQSStore() {
     localStorage.removeItem('qs_flow_user');
   };
 
+  const addProject = (projectData: Omit<Project, 'id' | 'updatedAt' | 'currentStage'>) => {
+    const newProject: Project = {
+      ...projectData,
+      id: Math.random().toString(36).substr(2, 9),
+      currentStage: 'Inquiry',
+      updatedAt: new Date(),
+    };
+    setProjects(prev => [newProject, ...prev]);
+  };
+
   const updateProjectStage = (projectId: string, toStage: QSStage, reason?: string) => {
     setProjects(prev => prev.map(p => {
       if (p.id === projectId) {
@@ -64,6 +74,7 @@ export function useQSStore() {
     isInitialized,
     login,
     logout,
+    addProject,
     updateProjectStage,
     users: MOCK_USERS
   };

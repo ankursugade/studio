@@ -6,9 +6,10 @@ import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/s
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { KanbanBoard } from "@/components/kanban/kanban-board";
 import { AvatarLogin } from "@/components/auth/avatar-login";
+import { NewProjectModal } from "@/components/kanban/new-project-modal";
 
 export default function KanbanPage() {
-  const { currentUser, login, users, projects, updateProjectStage, isInitialized } = useQSStore();
+  const { currentUser, login, users, projects, updateProjectStage, addProject, isInitialized } = useQSStore();
 
   if (!isInitialized) return null;
 
@@ -26,10 +27,13 @@ export default function KanbanPage() {
               <SidebarTrigger />
               <h1 className="text-xl font-bold tracking-tight">MEP QS Workflow</h1>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-medium bg-accent/10 text-accent px-3 py-1 rounded-full border border-accent/20">
-                Drag cards to update stage
-              </span>
+            <div className="flex items-center gap-4">
+              <div className="hidden sm:flex items-center gap-2">
+                <span className="text-xs font-medium bg-accent/10 text-accent px-3 py-1 rounded-full border border-accent/20">
+                  Drag cards to update stage
+                </span>
+              </div>
+              <NewProjectModal users={users} onAdd={addProject} />
             </div>
           </header>
 
