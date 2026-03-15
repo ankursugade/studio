@@ -54,32 +54,75 @@ export function useQSStore() {
   };
 
   const addProject = (projectData: Omit<Project, 'id' | 'updatedAt' | 'currentStage' | 'logs'>) => {
+    const initialLog: ProjectLogEntry = {
+      id: Math.random().toString(36).substr(2, 9),
+      userId: currentUser?.id || 'unknown',
+      message: "Project initialized and added to workflow",
+      timestamp: new Date()
+    };
     const newProject: Project = {
       ...projectData,
       id: Math.random().toString(36).substr(2, 9),
       currentStage: stages[0]?.id || 'inquiry',
       updatedAt: new Date(),
-      logs: [],
+      logs: [initialLog],
     };
     setProjects(prev => [newProject, ...prev]);
   };
 
   const updateProject = (projectId: string, updates: Partial<Project>) => {
-    setProjects(prev => prev.map(p => 
-      p.id === projectId ? { ...p, ...updates, updatedAt: new Date() } : p
-    ));
-  };
-
-  const addProjectLog = (projectId: string, message: string) => {
     setProjects(prev => prev.map(p => {
       if (p.id === projectId) {
-        const newLog: ProjectLogEntry = {
-          id: Math.random().toString(36).substr(2, 9),
-          userId: currentUser?.id || 'unknown',
-          message,
-          timestamp: new Date()
-        };
-        return { ...p, logs: [newLog, ...(p.logs || [])], updatedAt: new Date() };
+        const newLogs = [...(p.logs || [])];
+        const logMessages: string[] = [];
+
+        // Detect specific changes for automatic logging
+        if (updates.title && updates.title !== p.title) logMessages.push(`Title updated to "${updates.title}"`);
+        if (updates.client && updates.client !== p.client) logMessages.push(`Client updated to "${updates.client}"`);
+        if (updates.areaSqFt !== undefined && updates.areaSqFt !== p.areaSqFt) logMessages.push(`Area updated to ${updates.areaSqFt} sq.ft.`);
+        if (updates.assignedTo && updates.assignedTo !== p.assignedTo) {
+          const newUser = MOCK_USERS.find(u => u.id === updates.assignedTo)?.name || 'New User';
+          logMessages.push(`Reassigned to ${newUser}`);
+        }
+        
+        // Task changes
+        if (updates.tasks) {
+          const oldTasks = p.tasks || [];
+          const newTasks = updates.tasks || [];
+          
+          newTasks.forEach(nt => {
+            const ot = oldTasks.find(t => t.id === nt.id);
+            if (!ot) {
+              logMessages.push(`New task created: "${nt.title}"`);
+            } else {
+              if (nt.isCompleted && !ot.isCompleted) logMessages.push(`Task completed: "${nt.title}"`);
+              if (!nt.isCompleted && ot.isCompleted) logMessages.push(`Task reopened: "${nt.title}"`);
+            }
+          });
+
+          oldTasks.forEach(ot => {
+            if (!newTasks.some(nt => nt.id === ot.id)) {
+              logMessages.push(`Task removed: "${ot.title}"`);
+            }
+          });
+        }
+
+        // General update log if no specific field was caught
+        if (logMessages.length === 0 && Object.keys(updates).length > 0) {
+          logMessages.push("Project parameters updated");
+        }
+
+        // Add each log message
+        logMessages.reverse().forEach(msg => {
+          newLogs.unshift({
+            id: Math.random().toString(36).substr(2, 9),
+            userId: currentUser?.id || 'unknown',
+            message: msg,
+            timestamp: new Date()
+          });
+        });
+
+        return { ...p, ...updates, logs: newLogs, updatedAt: new Date() };
       }
       return p;
     }));
@@ -89,10 +132,22 @@ export function useQSStore() {
     setProjects(prev => prev.map(p => {
       if (p.id === projectId) {
         const fromStageId = p.currentStage;
+        const fromStageName = stages.find(s => s.id === fromStageId)?.name || fromStageId;
+        const toStageName = stages.find(s => s.id === toStageId)?.name || toStageId;
         
         const fromIndex = stages.findIndex(s => s.id === fromStageId);
         const toIndex = stages.findIndex(s => s.id === toStageId);
         
+        const newLogs = [...(p.logs || [])];
+        const logMsg = `Stage changed from "${fromStageName}" to "${toStageName}"${reason ? ` (Revision Reason: ${reason})` : ''}`;
+        
+        newLogs.unshift({
+          id: Math.random().toString(36).substr(2, 9),
+          userId: currentUser?.id || 'unknown',
+          message: logMsg,
+          timestamp: new Date()
+        });
+
         if (toIndex < fromIndex && reason) {
           const newRevision: Revision = {
             id: Math.random().toString(36).substr(2, 9),
@@ -106,7 +161,7 @@ export function useQSStore() {
           setRevisions(revs => [newRevision, ...revs]);
         }
 
-        return { ...p, currentStage: toStageId, updatedAt: new Date() };
+        return { ...p, currentStage: toStageId, logs: newLogs, updatedAt: new Date() };
       }
       return p;
     }));
@@ -127,7 +182,6 @@ export function useQSStore() {
     logout,
     addProject,
     updateProject,
-    addProjectLog,
     updateProjectStage,
     updateStages,
     users: MOCK_USERS

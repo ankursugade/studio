@@ -19,7 +19,7 @@ interface KanbanBoardProps {
 }
 
 export function KanbanBoard({ projects, users, stages, onUpdateStage }: KanbanBoardProps) {
-  const { updateProject, addProjectLog } = useQSStore();
+  const { updateProject } = useQSStore();
   const [revisionData, setRevisionData] = useState<{
     project: Project;
     toStage: QSStage;
@@ -136,7 +136,6 @@ export function KanbanBoard({ projects, users, stages, onUpdateStage }: KanbanBo
         open={!!logProject}
         onOpenChange={(open) => !open && setLogProject(null)}
         users={users}
-        onAddLog={addProjectLog}
       />
     </div>
   );
