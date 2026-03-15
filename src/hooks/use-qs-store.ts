@@ -19,22 +19,32 @@ export function useQSStore() {
     const savedRevisions = localStorage.getItem('qs_flow_revisions');
 
     if (savedUser) setCurrentUser(JSON.parse(savedUser));
-    if (savedStages) setStages(JSON.parse(savedStages));
+    if (savedStages) {
+      const parsedStages = JSON.parse(savedStages);
+      if (parsedStages && parsedStages.length > 0) {
+        setStages(parsedStages);
+      }
+    }
     
     if (savedProjects) {
       const parsed = JSON.parse(savedProjects);
-      if (parsed && parsed.length > 0) {
+      if (parsed && Array.isArray(parsed) && parsed.length > 0) {
         setProjects(parsed.map((p: any) => ({ 
           ...p, 
           updatedAt: new Date(p.updatedAt),
           logs: p.logs?.map((l: any) => ({ ...l, timestamp: new Date(l.timestamp) })) || []
         })));
+      } else {
+        // If stored projects is empty, use MOCK_PROJECTS
+        setProjects(MOCK_PROJECTS);
       }
     }
     
     if (savedRevisions) {
       const parsed = JSON.parse(savedRevisions);
-      setRevisions(parsed.map((r: any) => ({ ...r, timestamp: new Date(r.timestamp) })));
+      if (parsed && Array.isArray(parsed)) {
+        setRevisions(parsed.map((r: any) => ({ ...r, timestamp: new Date(r.timestamp) })));
+      }
     }
     
     setIsInitialized(true);
@@ -153,7 +163,7 @@ export function useQSStore() {
           timestamp: new Date()
         });
 
-        if (toIndex < fromIndex && reason) {
+        if (fromIndex !== -1 && toIndex !== -1 && toIndex < fromIndex && reason) {
           const newRevision: Revision = {
             id: Math.random().toString(36).substr(2, 9),
             projectId,
