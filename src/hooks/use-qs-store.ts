@@ -2,19 +2,24 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Project, User, Revision, QSStage, QS_STAGES } from '@/lib/types';
+import { Project, User, Revision, QSStage, INITIAL_QS_STAGES } from '@/lib/types';
 import { MOCK_PROJECTS, MOCK_USERS } from '@/lib/mock-data';
 
 export function useQSStore() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [projects, setProjects] = useState<Project[]>(MOCK_PROJECTS);
   const [revisions, setRevisions] = useState<Revision[]>([]);
+  const [stages, setStages] = useState<QSStage[]>(INITIAL_QS_STAGES);
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
     const savedUser = localStorage.getItem('qs_flow_user');
+    const savedStages = localStorage.getItem('qs_flow_stages');
     if (savedUser) {
       setCurrentUser(JSON.parse(savedUser));
+    }
+    if (savedStages) {
+      setStages(JSON.parse(savedStages));
     }
     setIsInitialized(true);
   }, []);
@@ -33,7 +38,7 @@ export function useQSStore() {
     const newProject: Project = {
       ...projectData,
       id: Math.random().toString(36).substr(2, 9),
-      currentStage: 'Inquiry',
+      currentStage: stages[0] || 'Inquiry',
       updatedAt: new Date(),
     };
     setProjects(prev => [newProject, ...prev]);
@@ -44,9 +49,8 @@ export function useQSStore() {
       if (p.id === projectId) {
         const fromStage = p.currentStage;
         
-        // Log revision if moving backward
-        const fromIndex = QS_STAGES.indexOf(fromStage);
-        const toIndex = QS_STAGES.indexOf(toStage);
+        const fromIndex = stages.indexOf(fromStage);
+        const toIndex = stages.indexOf(toStage);
         
         if (toIndex < fromIndex && reason) {
           const newRevision: Revision = {
@@ -67,15 +71,22 @@ export function useQSStore() {
     }));
   };
 
+  const updateStages = (newStages: QSStage[]) => {
+    setStages(newStages);
+    localStorage.setItem('qs_flow_stages', JSON.stringify(newStages));
+  };
+
   return {
     currentUser,
     projects,
     revisions,
+    stages,
     isInitialized,
     login,
     logout,
     addProject,
     updateProjectStage,
+    updateStages,
     users: MOCK_USERS
   };
 }

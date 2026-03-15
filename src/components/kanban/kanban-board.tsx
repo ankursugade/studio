@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { QSStage, QS_STAGES, Project, User } from "@/lib/types";
+import { QSStage, Project, User } from "@/lib/types";
 import { ProjectCard } from "./project-card";
 import { RevisionModal } from "./revision-modal";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
@@ -10,10 +10,11 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 interface KanbanBoardProps {
   projects: Project[];
   users: User[];
+  stages: QSStage[];
   onUpdateStage: (projectId: string, toStage: QSStage, reason?: string) => void;
 }
 
-export function KanbanBoard({ projects, users, onUpdateStage }: KanbanBoardProps) {
+export function KanbanBoard({ projects, users, stages, onUpdateStage }: KanbanBoardProps) {
   const [revisionData, setRevisionData] = useState<{
     project: Project;
     toStage: QSStage;
@@ -30,8 +31,8 @@ export function KanbanBoard({ projects, users, onUpdateStage }: KanbanBoardProps
     
     if (!project || project.currentStage === toStage) return;
 
-    const fromIndex = QS_STAGES.indexOf(project.currentStage);
-    const toIndex = QS_STAGES.indexOf(toStage);
+    const fromIndex = stages.indexOf(project.currentStage);
+    const toIndex = stages.indexOf(toStage);
 
     if (toIndex < fromIndex) {
       // Backward move: Require revision reason
@@ -57,7 +58,7 @@ export function KanbanBoard({ projects, users, onUpdateStage }: KanbanBoardProps
     <div className="h-full">
       <ScrollArea className="h-full w-full pb-6">
         <div className="flex gap-6 h-full p-2 min-h-[calc(100vh-200px)]">
-          {QS_STAGES.map((stage) => {
+          {stages.map((stage) => {
             const stageProjects = projects.filter(p => p.currentStage === stage);
             return (
               <div 

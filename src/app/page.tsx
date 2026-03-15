@@ -9,10 +9,9 @@ import { StatsGrid } from "@/components/dashboard/stats-grid";
 import { ActivityFeed } from "@/components/dashboard/activity-feed";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { QS_STAGES } from "@/lib/types";
 
 export default function Home() {
-  const { currentUser, login, users, projects, revisions, isInitialized } = useQSStore();
+  const { currentUser, login, users, projects, stages, revisions, isInitialized } = useQSStore();
 
   if (!isInitialized) return null;
 
@@ -21,10 +20,13 @@ export default function Home() {
   }
 
   // Aggregate project count per stage for the chart
-  const stageData = QS_STAGES.map(stage => ({
+  const stageData = stages.map(stage => ({
     name: stage,
     count: projects.filter(p => p.currentStage === stage).length
   }));
+
+  const lastStage = stages[stages.length - 1];
+  const completedCount = projects.filter(p => p.currentStage === lastStage).length;
 
   return (
     <SidebarProvider>
@@ -42,7 +44,7 @@ export default function Home() {
           </header>
 
           <main className="p-6 space-y-8 max-w-[1400px] mx-auto">
-            <StatsGrid projects={projects} revisions={revisions} />
+            <StatsGrid projects={projects} revisions={revisions} lastStage={lastStage} />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2 space-y-8">

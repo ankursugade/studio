@@ -1,13 +1,7 @@
 
-export type QSStage = 
-  | 'Inquiry'
-  | 'Take-off'
-  | 'Estimation'
-  | 'Review'
-  | 'Tender Submission'
-  | 'Post-Tender';
+export type QSStage = string;
 
-export const QS_STAGES: QSStage[] = [
+export const INITIAL_QS_STAGES: QSStage[] = [
   'Inquiry',
   'Take-off',
   'Estimation',
@@ -21,6 +15,7 @@ export interface User {
   name: string;
   role: string;
   avatar: string;
+  isAdmin?: boolean;
 }
 
 export interface Project {
