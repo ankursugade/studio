@@ -29,7 +29,9 @@ export function useQSStore() {
     
     if (savedProjects) {
       const parsed = JSON.parse(savedProjects);
-      if (parsed && Array.isArray(parsed) && parsed.length > 0) {
+      // If the saved list is significantly smaller than the mock data, 
+      // it means we've updated the demo data and should prioritize it.
+      if (parsed && Array.isArray(parsed) && parsed.length > 5) {
         setProjects(parsed.map((p: any) => ({ 
           ...p, 
           // Ensure projects have status (migration for older data)

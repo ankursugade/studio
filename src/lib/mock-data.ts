@@ -343,7 +343,7 @@ export const MOCK_PROJECTS: Project[] = [
     subCategory: 'Lab Only',
     contractType: 'Lumsum',
     pricingModel: 'Close Book',
-    mepDesignReviewer: 'TChalla',
+    mepDesignReviewer: 'T\'Challa',
     itDesignReviewer: 'Shuri',
     projectQsOwner: 'Okoye',
     areaSqFt: 30000,
