@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Project, User, Revision, QSStage, INITIAL_QS_STAGES, ProjectTask } from '@/lib/types';
+import { Project, User, Revision, QSStage, INITIAL_QS_STAGES, ProjectLogEntry } from '@/lib/types';
 import { MOCK_PROJECTS, MOCK_USERS } from '@/lib/mock-data';
 
 export function useQSStore() {
@@ -22,7 +22,11 @@ export function useQSStore() {
     if (savedStages) setStages(JSON.parse(savedStages));
     if (savedProjects) {
       const parsed = JSON.parse(savedProjects);
-      setProjects(parsed.map((p: any) => ({ ...p, updatedAt: new Date(p.updatedAt) })));
+      setProjects(parsed.map((p: any) => ({ 
+        ...p, 
+        updatedAt: new Date(p.updatedAt),
+        logs: p.logs?.map((l: any) => ({ ...l, timestamp: new Date(l.timestamp) })) || []
+      })));
     }
     if (savedRevisions) {
       const parsed = JSON.parse(savedRevisions);
@@ -49,12 +53,13 @@ export function useQSStore() {
     localStorage.removeItem('qs_flow_user');
   };
 
-  const addProject = (projectData: Omit<Project, 'id' | 'updatedAt' | 'currentStage'>) => {
+  const addProject = (projectData: Omit<Project, 'id' | 'updatedAt' | 'currentStage' | 'logs'>) => {
     const newProject: Project = {
       ...projectData,
       id: Math.random().toString(36).substr(2, 9),
       currentStage: stages[0]?.id || 'inquiry',
       updatedAt: new Date(),
+      logs: [],
     };
     setProjects(prev => [newProject, ...prev]);
   };
@@ -63,6 +68,21 @@ export function useQSStore() {
     setProjects(prev => prev.map(p => 
       p.id === projectId ? { ...p, ...updates, updatedAt: new Date() } : p
     ));
+  };
+
+  const addProjectLog = (projectId: string, message: string) => {
+    setProjects(prev => prev.map(p => {
+      if (p.id === projectId) {
+        const newLog: ProjectLogEntry = {
+          id: Math.random().toString(36).substr(2, 9),
+          userId: currentUser?.id || 'unknown',
+          message,
+          timestamp: new Date()
+        };
+        return { ...p, logs: [newLog, ...(p.logs || [])], updatedAt: new Date() };
+      }
+      return p;
+    }));
   };
 
   const updateProjectStage = (projectId: string, toStageId: string, reason?: string) => {
@@ -107,6 +127,7 @@ export function useQSStore() {
     logout,
     addProject,
     updateProject,
+    addProjectLog,
     updateProjectStage,
     updateStages,
     users: MOCK_USERS

@@ -6,16 +6,18 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
-import { GripVertical, Building2, User2, Ruler, Tag, Briefcase, CheckSquare, ShieldCheck } from "lucide-react";
+import { GripVertical, Building2, User2, Ruler, Tag, Briefcase, CheckSquare, ShieldCheck, History } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface ProjectCardProps {
   project: Project;
   assignedUser?: User;
   onDragStart: (e: React.DragEvent, projectId: string) => void;
   onClick: (project: Project) => void;
+  onLogClick: (project: Project) => void;
 }
 
-export function ProjectCard({ project, assignedUser, onDragStart, onClick }: ProjectCardProps) {
+export function ProjectCard({ project, assignedUser, onDragStart, onClick, onLogClick }: ProjectCardProps) {
   const openTasksCount = project.tasks?.filter(t => !t.isCompleted).length || 0;
 
   return (
@@ -34,7 +36,20 @@ export function ProjectCard({ project, assignedUser, onDragStart, onClick }: Pro
             <Tag className="h-3 w-3" /> {project.mainCategory}
           </p>
         </div>
-        <GripVertical className="h-4 w-4 text-muted-foreground/30 group-hover:text-muted-foreground cursor-grab" />
+        <div className="flex items-center gap-1">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="h-7 w-7 text-muted-foreground hover:text-accent hover:bg-accent/10"
+            onClick={(e) => {
+              e.stopPropagation();
+              onLogClick(project);
+            }}
+          >
+            <History className="h-4 w-4" />
+          </Button>
+          <GripVertical className="h-4 w-4 text-muted-foreground/30 group-hover:text-muted-foreground cursor-grab" />
+        </div>
       </CardHeader>
       <CardContent className="p-3 pt-1 space-y-3">
         <div className="flex flex-col gap-1.5">

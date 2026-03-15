@@ -6,6 +6,7 @@ import { QSStage, Project, User } from "@/lib/types";
 import { ProjectCard } from "./project-card";
 import { RevisionModal } from "./revision-modal";
 import { ProjectDetailModal } from "./project-detail-modal";
+import { ProjectLogModal } from "./project-log-modal";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useQSStore } from "@/hooks/use-qs-store";
@@ -18,13 +19,14 @@ interface KanbanBoardProps {
 }
 
 export function KanbanBoard({ projects, users, stages, onUpdateStage }: KanbanBoardProps) {
-  const { updateProject } = useQSStore();
+  const { updateProject, addProjectLog } = useQSStore();
   const [revisionData, setRevisionData] = useState<{
     project: Project;
     toStage: QSStage;
   } | null>(null);
 
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [logProject, setLogProject] = useState<Project | null>(null);
 
   const handleDragStart = (e: React.DragEvent, projectId: string) => {
     e.dataTransfer.setData("projectId", projectId);
@@ -96,6 +98,7 @@ export function KanbanBoard({ projects, users, stages, onUpdateStage }: KanbanBo
                         assignedUser={users.find(u => u.id === project.assignedTo)}
                         onDragStart={handleDragStart}
                         onClick={setSelectedProject}
+                        onLogClick={setLogProject}
                       />
                     ))}
                     {stageProjects.length === 0 && (
@@ -126,6 +129,14 @@ export function KanbanBoard({ projects, users, stages, onUpdateStage }: KanbanBo
         onOpenChange={(open) => !open && setSelectedProject(null)}
         users={users}
         onUpdate={updateProject}
+      />
+
+      <ProjectLogModal
+        project={logProject}
+        open={!!logProject}
+        onOpenChange={(open) => !open && setLogProject(null)}
+        users={users}
+        onAddLog={addProjectLog}
       />
     </div>
   );

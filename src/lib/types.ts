@@ -28,6 +28,13 @@ export interface ProjectTask {
   isCompleted: boolean;
 }
 
+export interface ProjectLogEntry {
+  id: string;
+  userId: string;
+  message: string;
+  timestamp: Date;
+}
+
 export type ProjectMainCategory = 'Interior fit out' | 'Interior + Base build' | 'Refurbishment';
 export type ProjectSubCategory = 'Office' | 'Office + Lab' | 'Lab Only';
 export type ContractType = 'Lumsum' | 'Measurable';
@@ -55,6 +62,7 @@ export interface Project {
   levels: number;
   notes: string;
   tasks: ProjectTask[];
+  logs: ProjectLogEntry[];
 }
 
 export interface Revision {
