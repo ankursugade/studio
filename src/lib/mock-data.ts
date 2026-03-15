@@ -9,10 +9,44 @@ export const MOCK_USERS: User[] = [
 ];
 
 export const MOCK_PROJECTS: Project[] = [
-  { id: 'p1', title: 'Grand Plaza HVAC', client: 'BuildCorp', assignedTo: 'u1', currentStage: 'inquiry', updatedAt: new Date(), value: 450000 },
-  { id: 'p2', title: 'City Hospital Electrical', client: 'HealthState', assignedTo: 'u2', currentStage: 'take-off', updatedAt: new Date(), value: 1200000 },
-  { id: 'p3', title: 'Metro Station Plumbing', client: 'TransportLink', assignedTo: 'u1', currentStage: 'estimation', updatedAt: new Date(), value: 350000 },
-  { id: 'p4', title: 'Data Center Fire Pro', client: 'SecureServe', assignedTo: 'u3', currentStage: 'review', updatedAt: new Date(), value: 890000 },
-  { id: 'p5', title: 'Luxury Hotel Lighting', client: 'GlobalStay', assignedTo: 'u2', currentStage: 'tender-submission', updatedAt: new Date(), value: 550000 },
-  { id: 'p6', title: 'Industrial Park Power', client: 'admin1', currentStage: 'post-tender', updatedAt: new Date(), value: 2100000 },
+  { 
+    id: 'p1', 
+    title: 'Grand Plaza HVAC', 
+    client: 'BuildCorp', 
+    assignedTo: 'u1', 
+    currentStage: 'inquiry', 
+    updatedAt: new Date(), 
+    value: 450000,
+    mainCategory: 'Interior fit out',
+    subCategory: 'Office',
+    contractType: 'Lumsum',
+    pricingModel: 'Close Book',
+    mepDesignReviewer: 'John Doe',
+    itDesignReviewer: 'Jane Smith',
+    projectQsOwner: 'Wilson James',
+    areaSqFt: 15000,
+    levels: 3,
+    notes: 'Urgent priority for Q3.',
+    tasks: []
+  },
+  { 
+    id: 'p2', 
+    title: 'City Hospital Electrical', 
+    client: 'HealthState', 
+    assignedTo: 'u2', 
+    currentStage: 'take-off', 
+    updatedAt: new Date(), 
+    value: 1200000,
+    mainCategory: 'Interior + Base build',
+    subCategory: 'Lab Only',
+    contractType: 'Measurable',
+    pricingModel: 'Open Book',
+    mepDesignReviewer: 'Mike Ross',
+    itDesignReviewer: 'Rachel Zane',
+    projectQsOwner: 'Harvey Specter',
+    areaSqFt: 50000,
+    levels: 5,
+    notes: 'Medical grade certification required.',
+    tasks: []
+  }
 ];

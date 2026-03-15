@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Project, User, Revision, QSStage, INITIAL_QS_STAGES } from '@/lib/types';
+import { Project, User, Revision, QSStage, INITIAL_QS_STAGES, ProjectTask } from '@/lib/types';
 import { MOCK_PROJECTS, MOCK_USERS } from '@/lib/mock-data';
 
 export function useQSStore() {
@@ -15,14 +15,29 @@ export function useQSStore() {
   useEffect(() => {
     const savedUser = localStorage.getItem('qs_flow_user');
     const savedStages = localStorage.getItem('qs_flow_stages');
-    if (savedUser) {
-      setCurrentUser(JSON.parse(savedUser));
+    const savedProjects = localStorage.getItem('qs_flow_projects');
+    const savedRevisions = localStorage.getItem('qs_flow_revisions');
+
+    if (savedUser) setCurrentUser(JSON.parse(savedUser));
+    if (savedStages) setStages(JSON.parse(savedStages));
+    if (savedProjects) {
+      const parsed = JSON.parse(savedProjects);
+      setProjects(parsed.map((p: any) => ({ ...p, updatedAt: new Date(p.updatedAt) })));
     }
-    if (savedStages) {
-      setStages(JSON.parse(savedStages));
+    if (savedRevisions) {
+      const parsed = JSON.parse(savedRevisions);
+      setRevisions(parsed.map((r: any) => ({ ...r, timestamp: new Date(r.timestamp) })));
     }
+    
     setIsInitialized(true);
   }, []);
+
+  useEffect(() => {
+    if (isInitialized) {
+      localStorage.setItem('qs_flow_projects', JSON.stringify(projects));
+      localStorage.setItem('qs_flow_revisions', JSON.stringify(revisions));
+    }
+  }, [projects, revisions, isInitialized]);
 
   const login = (user: User) => {
     setCurrentUser(user);
@@ -42,6 +57,12 @@ export function useQSStore() {
       updatedAt: new Date(),
     };
     setProjects(prev => [newProject, ...prev]);
+  };
+
+  const updateProject = (projectId: string, updates: Partial<Project>) => {
+    setProjects(prev => prev.map(p => 
+      p.id === projectId ? { ...p, ...updates, updatedAt: new Date() } : p
+    ));
   };
 
   const updateProjectStage = (projectId: string, toStageId: string, reason?: string) => {
@@ -85,6 +106,7 @@ export function useQSStore() {
     login,
     logout,
     addProject,
+    updateProject,
     updateProjectStage,
     updateStages,
     users: MOCK_USERS

@@ -22,14 +22,39 @@ export interface User {
   isAdmin?: boolean;
 }
 
+export interface ProjectTask {
+  id: string;
+  title: string;
+  isCompleted: boolean;
+}
+
+export type ProjectMainCategory = 'Interior fit out' | 'Interior + Base build' | 'Refurbishment';
+export type ProjectSubCategory = 'Office' | 'Office + Lab' | 'Lab Only';
+export type ContractType = 'Lumsum' | 'Measurable';
+export type PricingModel = 'Close Book' | 'Open Book';
+
 export interface Project {
   id: string;
   title: string;
   client: string;
-  assignedTo: string; // User ID
+  assignedTo: string; // MEP Estimation Owner
   currentStage: string; // References QSStage.id
   updatedAt: Date;
   value?: number;
+  
+  // New detailed parameters
+  mainCategory: ProjectMainCategory;
+  subCategory: ProjectSubCategory;
+  contractType: ContractType;
+  pricingModel: PricingModel;
+  
+  mepDesignReviewer: string;
+  itDesignReviewer: string;
+  projectQsOwner: string;
+  areaSqFt: number;
+  levels: number;
+  notes: string;
+  tasks: ProjectTask[];
 }
 
 export interface Revision {
